@@ -1,0 +1,3 @@
+const initial=()=>({p:[0,0,1800],v:[0,0,-5],yaw:0,pitch:0,time:0,status:'approach',hold:0});
+function step(s,input,dt){if(s.status==='collision')return s;s.time+=dt;s.yaw+=input.yaw*.48*dt;s.pitch=Math.max(-1.45,Math.min(1.45,s.pitch+input.pitch*.48*dt));const f=[Math.sin(s.yaw)*Math.cos(s.pitch),Math.sin(s.pitch),-Math.cos(s.yaw)*Math.cos(s.pitch)];for(let i=0;i<3;i++){s.v[i]+=f[i]*input.thrust*3*dt;s.p[i]+=s.v[i]*dt;}const range=Math.hypot(...s.p),speed=Math.hypot(...s.v);if(range<205)s.status='collision';else if(range>=350&&range<=550&&speed<1){s.hold+=dt;s.status=s.hold>=5?'survey ready':'holding';}else{s.hold=0;s.status='approach';}return s;}
+if(typeof module!=='undefined')module.exports={initial,step};
