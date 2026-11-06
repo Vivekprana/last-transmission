@@ -2,7 +2,7 @@
 A fictional planetary-defense mission. This chapter starts at an Earth launchpad and ends in a parking orbit. Asteroid transfer and deflection are not implemented yet.
 
 ## Run and deploy
-Node 22: `node server.js`. Render build: `node --check server.js`; start: `node server.js`. One instance; no npm install required. The self-hosted Three.js renderer and Earth textures require WebGL 2 on the shared window. The phone controller works without WebGL.
+Node 22: `node server.js`. Render build: `node --check server.js`; start: `node server.js`. One instance; no npm install required. The self-hosted Three.js renderer and Earth textures use WebGL 2 on the shared window, with an automatic software-rendered textured-Earth fallback when WebGL is unavailable. The phone controller works without WebGL.
 
 ## Flight
 Enter cockpit, then Initiate Countdown. Eight-second countdown. Maintain approximately 86% throttle and keep the guidance ring centered. Arrow keys trim yaw/pitch; W/S increase/decrease throttle. A neutral flight reaches parking orbit after approximately 4 minutes 23 seconds of flight, plus countdown. Stage separation occurs at T+115 seconds. Passing 100 km transitions to insertion. Guided circularization completes in a roughly 188 km orbit at 7.8 km/s.
