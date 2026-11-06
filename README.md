@@ -1,16 +1,20 @@
-# Last Transmission — Asteroid Rendezvous / Flight Study 01
-A fictional planetary defense mission. This first slice implements the shared forward window and one pilot, not the complete deflection mission.
+# Last Transmission — Earth Departure / Flight Study 02
+A fictional planetary-defense mission. This chapter starts at an Earth launchpad and ends in a parking orbit. Asteroid transfer and deflection are not implemented yet.
 
-Run `node server.js` with Node 22. Render start command: `node server.js`. No packages or external asset services are required.
+## Run and deploy
+Node 22: `node server.js`. Render build: `node --check server.js`; start: `node server.js`. One instance; no npm install required. The self-hosted Three.js renderer and Earth textures require WebGL 2 on the shared window. The phone controller works without WebGL.
 
-## Play
-Open the site on the big screen and begin a flight. Arrow keys control yaw and pitch. W applies forward thrust; S applies reverse thrust. Release to coast. H shows/hides controls. Fullscreen hides browser chrome where supported.
+## Flight
+Enter cockpit, then Initiate Countdown. Eight-second countdown. Maintain approximately 86% throttle and keep the guidance ring centered. Arrow keys trim yaw/pitch; W/S increase/decrease throttle. A neutral flight reaches parking orbit after approximately 4 minutes 23 seconds of flight, plus countdown. Stage separation occurs at T+115 seconds. Passing 100 km transitions to insertion. Guided circularization completes in a roughly 188 km orbit at 7.8 km/s.
 
-Use Copy Phone Controller Link to open a control-only station on a phone. Tap Take Pilot Controls on the phone after the previous pilot closes or hides their tab (five-second lease timeout). The main screen remains the shared window. Touch controls are press-and-hold. Only one pilot can command a flight at a time. Display-only URL: `/?room=CODE&window=1`.
+Use Phone Controller to show and copy the controller address. Click Release Controls on the big screen, then Take Pilot Controls on the phone. Window Only hides control UI; H restores it. Fullscreen uses the browser fullscreen API. A new flight code isolates each session. Reset returns to the pad.
 
-## Architecture
-The Node server owns each mission's physics, ticks at 20 Hz and broadcasts snapshots through SSE. Displays interpolate position and attitude. Pilot commands are bounded yaw/pitch/thrust inputs. Server cuts input after 900 ms without a command, preserving velocity. A pilot lease prevents competing controllers.
+## Model and architecture
+Server-authoritative 20 Hz physics and SSE snapshots shared across screens. Pilot lease prevents competing controllers. After 900 ms without command updates, attitude/rate inputs neutralize; the engine retains its current throttle and ascent guidance continues. The pilot can explicitly release controls. Rooms expire after 24 hours or disappear on restart. Free hosting can sleep.
 
-The ship starts 1,800 m from the asteroid center, closing at 5 m/s. Translational acceleration is 3 m/s². Yaw and pitch use assisted angular-rate control; roll is stabilized. Velocity is expressed relative to the asteroid. This short-range flight model omits orbital dynamics and gravity. The rotating, seeded low-poly asteroid is rendered in canvas with perspective projection and directional lighting. A conservative spherical collision envelope is 205 m. Hold 350–550 m from the center at less than 1 m/s for five seconds to establish the survey position.
+The simplified two-dimensional ascent model integrates radial/tangential motion around a spherical Earth, Newtonian gravity, an exponential atmosphere and approximate drag. Throttle changes acceleration; yaw/pitch trims change the thrust vector. Propellant, load and staging are approximations. Guidance schedules the climb and automatically completes final circularization once the insertion envelope is reached. This is an accessible flight experience, not a launch certification or high-fidelity orbital simulator. The visual globe and sky are illustrative rather than a geospatially precise launch location.
 
-One Node instance only. Rooms are in memory and expire after 24 hours or on restart. Free Render services may sleep. No persistent sessions, other crew roles, attachment or deflection mechanics yet.
+## Graphics and sources
+Perspective WebGL scene with a textured Earth sphere, separate drifting cloud shell, atmosphere glow, day/night imagery, directional lighting, cloud billboards, launch gantry and cockpit framing. Imagery is served locally; there are no runtime CDN dependencies.
+- Three.js 0.170.0: https://github.com/mrdoob/three.js (MIT; license in public/vendor/THREE-LICENSE.txt).
+- Planet textures: Three.js example assets https://github.com/mrdoob/three.js/tree/dev/examples/textures/planets (earth_atmos_2048.jpg, earth_lights_2048.png, earth_clouds_1024.png; copies of night/cloud maps converted to JPEG).
