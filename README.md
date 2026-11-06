@@ -1,30 +1,30 @@
-# Last Transmission — Earth Departure / Flight Study 03
-Fictional planetary defense mission: Earth launch to parking orbit. Asteroid transfer, rendezvous and deflection are not built into this chapter.
+# Last Transmission — Optional Crew / Flight 04
+Fictional Earth-launch chapter ending in parking orbit. Asteroid transfer and deflection are not built yet.
 
-## Run
-Node 22: `node server.js`. Render build: `node --check server.js`; start: `node server.js`. One running instance. No npm install required. Three.js, Earth textures and generated audio are self-hosted. The main screen uses WebGL 2 with an automatic textured software fallback; the pilot station does not need WebGL.
+## Run and deploy
+Node 22: `node server.js`. Render build: `node --check server.js`; start: `node server.js`. One instance. No npm install required. Graphics, textures and synthesized audio are served locally. WebGL 2 has a software-rendered fallback; phone stations do not require 3D.
 
-## Play
-1. Open the site on the big screen and choose Create Shared Window.
-2. Click Connect Phone and open its pilot link on a phone. Alternatively, open `/?controller=1` and enter the six-character flight code.
-3. The phone automatically claims the pilot station. Set the forward-thrust lever, then initiate countdown on the phone.
-4. Drag the circular joystick to apply yaw/pitch torque. Release early: angular motion persists and gradually damps. Keep the guidance ring centered on the shared window. Gusts and a stage-separation impulse require active corrections.
-5. The lever is forward thrust only, 0–100%. There is no reverse engine. Around 86% is the baseline ascent setting. Launch, reset and release are all on the phone.
-6. Enable Sound on the big screen to unlock browser audio. Engine rumble responds to thrust, airflow responds to dynamic pressure, countdown tones increase urgency, staging thumps, deviation/link-loss warnings beep and orbit has a confirmation chime. Mute and volume are available on the shared screen.
+## Any crew size
+Create a shared window on the main screen. Pilot, navigator and engineer begin in GAME AI mode. Start Mission runs a fully automated flight even with no players. Start/reset on the shared window are mission-host actions, not steering controls; no flight keyboard bindings exist.
 
-The central window has no flight keyboard bindings or flight-control widgets. Pilot-station tokens authorize the control endpoints, and an exclusive pilot lease prevents competing controllers. The controller URL separates product roles; it is not a security attestation that the client is a physical phone. Alternative touch sliders are included for users who cannot use the circular joystick. Phone joystick pointer capture supports steering and throttle with separate fingers.
+Open a crew link on a phone, or `/?controller=1` and enter the code. Choose Pilot, Navigator or Engineer. Claim any available seat before or during flight. Hand to AI releases it immediately. If its phone stops heartbeats for 1.6 seconds, the game controller takes over without pausing. Return to the phone to resume if the lease has not been replaced. Each station has an exclusive lease. You can switch seats from the phone selector; an occupied seat rejects a competing claim. Every role is optional, including the pilot.
 
-## Difficulty and connection behavior
-The ship does not automatically follow the guidance pitch. Inputs apply angular acceleration with damped inertia. A climb program supplies a target, while atmospheric disturbances and staging perturb the actual attitude. Sustained deviation beyond 12 degrees accumulates stress; stress recovers inside the safe corridor. An unattended flight loses its trajectory in roughly 48 seconds. Simulated active corrections reach orbit in approximately 4 minutes 23 seconds, plus an eight-second countdown. Poor steering or throttle can extend the flight or cause failure.
+## Roles
+- Pilot: analog thumb joystick applies yaw/pitch torque with inertia, gusts and staging kicks. Forward-only 0–100% thrust lever. No reverse engine. Release centers input rather than angular velocity. Sustained guidance error accumulates trajectory stress. Alternative touch sliders are available.
+- Navigator: ascent map shows actual path (cyan), committed target altitude (dashed), and a 60-second projection assuming guidance tracking (gold). Select low (180 km), balanced (220 km), or high (260 km) target orbit; optionally apply a −8° to +8° pitch offset, then Commit Flight Plan. The pilot's guidance target and the physical climb respond. A higher target requires a longer climb and more fuel. The final insertion envelope allows up to 35 km deviation from target; this is a simplified assisted launch model.
+- Engineer: cap available engine thrust (50–100%), allocate cooling (0–100%) and protect a fuel reserve (5–40%). Apply Allocation makes these limits authoritative. Delivered thrust is the lesser of pilot request and engine capability. Above 95°C heat derates thrust. Cooling consumes auxiliary fuel; reserves cut engine thrust when reached. The pilot's throttle lever is a request, not an override of engine limits.
 
-When pilot updates stop for more than 1.2 seconds, an active launch pauses rather than crashing due to a connection interruption. Return to the phone controller to resume. Reclaim the pilot station if another pilot has taken the lease. Releasing the joystick centers input, not angular velocity. Reset on the phone starts over at the pad.
+## Built-in game controllers
+These are deterministic simulation controllers, not LLM calls. The AI pilot tracks the current guidance with damped feedback; the AI navigator retains the committed route and relaxes manual pitch offsets; the AI engineer manages a conservative thrust cap, cooling and reserve. Role labels on the main window always show HUMAN or GAME AI. A human can make poor decisions; optional AI fills empty seats rather than overriding an occupied station.
 
-## Model and architecture
-Server-authoritative 20 Hz motion and SSE snapshots shared across windows. Radial/tangential motion around a spherical Earth includes Newtonian gravity, an exponential atmosphere and approximate drag. Throttle changes acceleration; yaw/pitch change the thrust vector. Fuel, load and staging are approximations. The final insertion envelope still performs assisted circularization. This is a flight experience prototype rather than a high-fidelity orbital simulator. The scenery is illustrative, not a geospatially precise Kennedy Space Center reconstruction.
+## Flight model
+Server-authoritative 20 Hz integration and SSE snapshots. Radial/tangential motion includes Newtonian gravity around a spherical Earth, exponential atmospheric density and approximate drag. The navigator's target defines guidance, and actual pilot attitude determines the thrust vector. Angular inertia, gusts and staging impulses require corrections. Engine heat, fuel and cooling are simplified. Assisted final circularization completes the insertion envelope. This is a game prototype, not a high-fidelity orbital simulator or geospatial reconstruction of Kennedy Space Center.
 
-Rooms expire after 24 hours or disappear on server restart. Free hosting can sleep. No durable reservation, ticketing or authentication system is provided.
+A balanced automated flight takes about 4 minutes 24 seconds plus an eight-second countdown. Hands-off human piloting can lose the trajectory in under a minute. All eight combinations of occupied/unoccupied roles were simulated to orbit using active control inputs for the occupied pilot. Live endpoint checks verify independent role authorization, exclusive seats, course/allocation effects and automatic takeover on release/disconnection.
 
-## Graphics and sources
-Perspective WebGL scene with textured Earth, separate cloud shell, atmosphere glow, directional lighting, cloud billboards, launch gantry and cockpit framing; software ray/sphere rendering when WebGL is unavailable. Browser-generated Web Audio synthesis uses no licensed sound downloads.
-- Three.js 0.170.0: https://github.com/mrdoob/three.js (MIT; license in public/vendor/THREE-LICENSE.txt).
-- Planet textures: https://github.com/mrdoob/three.js/tree/dev/examples/textures/planets (earth_atmos_2048.jpg, earth_lights_2048.png, earth_clouds_1024.png; locally optimized JPEG copies).
+Rooms expire after 24 hours or disappear on restart. Free hosting may sleep. Reservations, durable saves and ticketing are not provided.
+
+## Sound and graphics
+Enable Sound on the main window to unlock browser audio. Engine/sub-bass rumble responds to thrust, airflow to pressure, with countdown tones, staging thump, deviation alerts and an orbit chime. Mute and volume are available. Audio is generated with Web Audio; no external sound downloads.
+
+Three.js 0.170.0 (MIT): https://github.com/mrdoob/three.js — license in public/vendor/THREE-LICENSE.txt. Planet textures from https://github.com/mrdoob/three.js/tree/dev/examples/textures/planets (earth_atmos_2048.jpg, earth_lights_2048.png, earth_clouds_1024.png; optimized JPEG copies).
