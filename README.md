@@ -25,6 +25,6 @@ A balanced automated flight takes about 4 minutes 24 seconds plus an eight-secon
 Rooms expire after 24 hours or disappear on restart. Free hosting may sleep. Reservations, durable saves and ticketing are not provided.
 
 ## Sound and graphics
-Enable Sound on the main window to unlock browser audio. Engine/sub-bass rumble responds to thrust, airflow to pressure, with countdown tones, staging thump, deviation alerts and an orbit chime. Mute and volume are available. Audio is generated with Web Audio; no external sound downloads.
+Enable Sound on the main window to unlock browser audio. Engine/sub-bass rumble responds to thrust, airflow to pressure, with countdown tones, staging thump, deviation alerts and an orbit chime. Sound activation is one-way; there is no off/mute control. Volume remains adjustable above zero. A shared fuel bar on the main window and all phone stations marks the protected reserve. Audio is generated with Web Audio; no external sound downloads.
 
 Three.js 0.170.0 (MIT): https://github.com/mrdoob/three.js — license in public/vendor/THREE-LICENSE.txt. Planet textures from https://github.com/mrdoob/three.js/tree/dev/examples/textures/planets (earth_atmos_2048.jpg, earth_lights_2048.png, earth_clouds_1024.png; optimized JPEG copies).
