@@ -1,7 +1,8 @@
+const {initialEncounter,stepEncounter}=require('./encounter');
 const DEG=Math.PI/180,MU=398600.4418,R=6371;
-const initial=()=>({phase:'pad',time:0,elapsed:0,countdown:8,altitude:.035,radial:0,speed:0,downrange:0,yaw:0,pitch:0,targetPitch:88,throttle:.86,fuel:100,q:0,g:1,hold:0,message:'Launch vehicle ready. Initiate countdown.',navigation:{profile:"balanced",altitude:220,bias:0},engineering:{cap:.95,cooling:.65,reserve:10},engineTemp:26,availableThrust:1,attitudePitch:88,pitchRate:0,yawRate:0,stress:0,linkLost:false});
-function step(s,input,dt){if(s.phase==='pad'||s.phase==='aborted')return s;s.elapsed+=dt;if(s.phase==='countdown'){s.countdown=Math.max(0,s.countdown-dt);if(s.countdown===0){s.phase='ascent';s.message='Liftoff. Hold the guidance marker.';}return s;}
-if(s.phase==='orbit'){s.downrange+=s.speed*dt;s.yaw+=input.yaw*12*dt;s.pitch=Math.max(-75,Math.min(75,s.pitch+input.pitch*12*dt));s.throttle=0;return s;}
+const initial=()=>({...initialEncounter(),phase:'pad',time:0,elapsed:0,countdown:8,altitude:.035,radial:0,speed:0,downrange:0,yaw:0,pitch:0,targetPitch:88,throttle:.86,fuel:100,q:0,g:1,hold:0,message:'Launch vehicle ready. Initiate countdown.',navigation:{profile:"balanced",altitude:220,bias:0},engineering:{cap:.95,cooling:.65,reserve:10},engineTemp:26,availableThrust:1,attitudePitch:88,pitchRate:0,yawRate:0,stress:0,linkLost:false});
+function step(s,input,dt){if(s.phase==='pad'||s.phase==='briefing'||s.phase==='aborted')return s;s.elapsed+=dt;if(s.phase==='countdown'){s.countdown=Math.max(0,s.countdown-dt);if(s.countdown===0){s.phase='ascent';s.message='Liftoff. Hold the guidance marker.';}return s;}
+if(['orbit','departure','complete'].includes(s.phase))return stepEncounter(s,input,dt);
 s.time+=dt;if(Number.isFinite(input.throttle))s.throttle=Math.max(0,Math.min(1,input.throttle));
 const t=s.time;s.stage=t<115?1:2;const r=R+s.altitude,circular=Math.sqrt(MU/r);s.targetPitch=t<12?88:Math.max(-7,80*Math.pow(Math.max(0,1-(t-12)/225),1.6));if(s.altitude>20){const desiredClimb=Math.max(-.1,Math.min(1.3,(s.navigation.altitude-s.altitude)*.012));s.targetPitch=Math.max(-14,Math.min(70,(desiredClimb-s.radial)*32+3));}
 s.targetPitch=Math.max(-20,Math.min(90,s.targetPitch+s.navigation.bias));

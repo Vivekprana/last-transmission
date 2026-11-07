@@ -28,3 +28,14 @@ Rooms expire after 24 hours or disappear on restart. Free hosting may sleep. Res
 Enable Sound on the main window to unlock browser audio. Engine/sub-bass rumble responds to thrust, airflow to pressure, with countdown tones, staging thump, deviation alerts and an orbit chime. Sound activation is one-way; there is no off/mute control. Volume remains adjustable above zero. A shared fuel bar on the main window and all phone stations marks the protected reserve. Audio is generated with Web Audio; no external sound downloads.
 
 Three.js 0.170.0 (MIT): https://github.com/mrdoob/three.js — license in public/vendor/THREE-LICENSE.txt. Planet textures from https://github.com/mrdoob/three.js/tree/dev/examples/textures/planets (earth_atmos_2048.jpg, earth_lights_2048.png, earth_clouds_1024.png; optimized JPEG copies).
+
+## Departure encounter
+After parking orbit, a 20–110 second maneuver window opens. Deliver 350 m/s and preserve 25% fuel, then cut thrust. The prototype ends at departure confirmation; the asteroid transfer remains a future chapter.
+
+Use **Practice departure encounter** to start at parking orbit with 45% fuel. Press Start mission to begin the clock. Reset preserves practice mode.
+
+Navigator: compare steady 55% and pulsed 95% burns on the time/delta-v graph, inspect predicted finish/fuel/temperature with current equipment, choose a start delay, commit, and monitor actual progress. Predictions assume accurate piloting and cutoff and do not predict future equipment faults.
+
+Engineer: diagnose primary-loop pressure collapse, isolate the leaking loop, activate backup cooling, and communicate capability. Sustained configuration supports 55% continuously. Boost permits 95% in 18-second pulses with eight seconds coast between. Leaving the primary loop open continues coolant loss even if backup is active.
+
+Pilot: hold attitude and manually execute the committed throttle schedule, including coasts and final cutoff. Phones remain the flight controls. Empty stations use deterministic AI and can be taken over or handed back mid-mission. Flight director messages and maneuver progress appear on the shared screen.
